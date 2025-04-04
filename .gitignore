@@ -27,8 +27,12 @@ yarn-error.*
 .DS_Store
 *.pem
 
+<<<<<<< HEAD
 # local env files
 .env*.local
+=======
+
+>>>>>>> 93ccba0 (Initial commit)
 
 # typescript
 *.tsbuildinfo

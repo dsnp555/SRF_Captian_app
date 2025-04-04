@@ -1,15 +1,56 @@
+<<<<<<< HEAD
 import { View, Text, StyleSheet, Switch, ScrollView, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 
 export default function HomeScreen() {
   const [isAvailable, setIsAvailable] = useState(true);
+=======
+import { View, Text, StyleSheet, Switch, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useState, useEffect } from 'react';
+import { useSubscription } from '../../context/subscription';
+import { useAuth } from '../../context/auth';
+import { router } from 'expo-router';
+
+export default function HomeScreen() {
+  const [isAvailable, setIsAvailable] = useState(true);
+  const { userSubscription, refreshSubscription, loading, availablePlans } = useSubscription();
+  const { user } = useAuth();
+
+  // Fetch subscription data when the screen loads
+  useEffect(() => {
+    refreshSubscription();
+  }, []);
+
+  // Get the current plan details
+  const currentPlan = userSubscription 
+    ? availablePlans.find(plan => plan.id === userSubscription.planId) 
+    : null;
+  
+  const hasActiveSubscription = Boolean(userSubscription && 
+    userSubscription.status === 'active' && 
+    new Date(userSubscription.endDate) > new Date());
+
+  // Format the renewal date
+  const renewalDate = userSubscription 
+    ? new Date(userSubscription.endDate).toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      })
+    : '';
+>>>>>>> 93ccba0 (Initial commit)
 
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
+<<<<<<< HEAD
         <Text style={styles.headerTitle}>Welcome, Koti</Text>
+=======
+        <Text style={styles.headerTitle}>Welcome, {user?.email ? user.email.split('@')[0] : 'Koti'}</Text>
+>>>>>>> 93ccba0 (Initial commit)
         <View style={styles.availabilityToggle}>
           <Text style={styles.toggleLabel}>You are {isAvailable ? 'available' : 'not available'} for ride now!</Text>
           <Switch value={isAvailable} onValueChange={setIsAvailable} />
@@ -43,6 +84,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
+<<<<<<< HEAD
       {/* Mothly Current Plan Section */}
       <View style={[styles.subscriptionPlans, { marginBottom: 0 }]}>
         <Text style={styles.sectionTitle}>Current Plan</Text>
@@ -62,6 +104,49 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
+=======
+      {/* Current Plan Section */}
+      <View style={[styles.subscriptionPlans, { marginBottom: 0 }]}>
+        <Text style={styles.sectionTitle}>Current Plan</Text>
+        
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="small" color="#0070FF" />
+            <Text style={styles.loadingText}>Loading subscription info...</Text>
+          </View>
+        ) : hasActiveSubscription && currentPlan ? (
+          <View style={[styles.planCard, styles.premiumPlan]}>
+            <View style={styles.planHeader}>
+              <Text style={[styles.planName, { color: '#FFFFFF' }]}>{currentPlan.name}</Text>
+              <Text style={[styles.planPrice, { color: '#FFFFFF' }]}>
+                ₹{currentPlan.price}
+                <Text style={[styles.planPeriod, { color: '#FFFFFF' }]}>
+                  /{currentPlan.duration === 1 ? 'month' : `${currentPlan.duration} months`}
+                </Text>
+              </Text>
+            </View>
+            <View style={styles.planFeatures}>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>
+                  {currentPlan.features[0]}
+                </Text>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="calendar-today" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>
+                  Renews on {renewalDate}
+                </Text>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.noPlanContainer}>
+            <Text style={styles.noPlanText}>No active subscription</Text>
+            <Text style={styles.noPlanSubtext}>Subscribe to a plan to access premium features</Text>
+          </View>
+        )}
+>>>>>>> 93ccba0 (Initial commit)
       </View>
 
       {/* Subscription Plans Section */}
@@ -94,7 +179,11 @@ export default function HomeScreen() {
           <View style={[styles.planCard, styles.premiumPlan]}>
             <View style={styles.planHeader}>
               <Text style={[styles.planName, { color: '#FFFFFF' }]}>Monthly</Text>
+<<<<<<< HEAD
               <Text style={[styles.planPrice, { color: '#FFFFFF' }]}>1400<Text style={[styles.planPeriod, { color: '#FFFFFF' }]}>/month</Text></Text>
+=======
+              <Text style={[styles.planPrice, { color: '#FFFFFF' }]}>₹1400<Text style={[styles.planPeriod, { color: '#FFFFFF' }]}>/month</Text></Text>
+>>>>>>> 93ccba0 (Initial commit)
             </View>
             <View style={styles.planFeatures}>
               <View style={styles.featureItem}>
@@ -103,15 +192,28 @@ export default function HomeScreen() {
               </View>
               <View style={styles.featureItem}>
                 <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+<<<<<<< HEAD
                 <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Priority Support</Text>
               </View>
               <View style={styles.featureItem}>
                 <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
                 <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Optimized Route</Text>
+=======
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Premium Support</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Priority Routes</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Commission Discounts</Text>
+>>>>>>> 93ccba0 (Initial commit)
               </View>
             </View>
           </View>
 
+<<<<<<< HEAD
           {/* Pro Plan */}
           <View style={styles.planCard}>
             <View style={styles.planHeader}>
@@ -130,6 +232,30 @@ export default function HomeScreen() {
               <View style={styles.featureItem}>
                 <MaterialIcons name="check-circle" size={20} color="#4CAF50" />
                 <Text style={styles.featureText}>Parcel Delivery</Text>
+=======
+          {/* Annual Plan */}
+          <View style={[styles.planCard, styles.annualPlan]}>
+            <View style={styles.planHeader}>
+              <Text style={[styles.planName, { color: '#FFFFFF' }]}>Annual</Text>
+              <Text style={[styles.planPrice, { color: '#FFFFFF' }]}>₹15000<Text style={[styles.planPeriod, { color: '#FFFFFF' }]}>/year</Text></Text>
+            </View>
+            <View style={styles.planFeatures}>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Unlimited Rides</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>VIP Support</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Priority Routes</Text>
+              </View>
+              <View style={styles.featureItem}>
+                <MaterialIcons name="check-circle" size={20} color="#FFFFFF" />
+                <Text style={[styles.featureText, { color: '#FFFFFF' }]}>Maximum Discounts</Text>
+>>>>>>> 93ccba0 (Initial commit)
               </View>
             </View>
           </View>
@@ -253,6 +379,12 @@ const styles = StyleSheet.create({
   premiumPlan: {
     backgroundColor: '#007AFF',
   },
+<<<<<<< HEAD
+=======
+  annualPlan: {
+    backgroundColor: '#FFC107',
+  },
+>>>>>>> 93ccba0 (Initial commit)
   planHeader: {
     marginBottom: 16,
   },
@@ -406,4 +538,32 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
   },
+<<<<<<< HEAD
+=======
+  loadingContainer: {
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#333333',
+    marginTop: 8,
+  },
+  noPlanContainer: {
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noPlanText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  noPlanSubtext: {
+    fontSize: 14,
+    color: '#8E8E93',
+    marginTop: 8,
+  },
+>>>>>>> 93ccba0 (Initial commit)
 });

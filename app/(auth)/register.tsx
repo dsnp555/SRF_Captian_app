@@ -1,45 +1,43 @@
-<<<<<<< HEAD
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useState } from 'react';
-import { router } from 'expo-router';
-=======
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { useAuth } from '../../context/auth';
->>>>>>> 93ccba0 (Initial commit)
+import { supabase } from '../../lib/supabase';
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-<<<<<<< HEAD
-
-  const handleLogin = () => {
-    // TODO: Implement actual login logic
-    router.replace('/(app)');
-=======
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+  const handleRegister = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
     
     setIsLoading(true);
     
     try {
-      const { error, success } = await signIn(email, password);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
       
       if (error) {
-        Alert.alert('Login Failed', error.message);
+        Alert.alert('Registration Failed', error.message);
         return;
       }
       
-      if (success) {
-        router.replace('/(app)');
-      }
+      // Navigate to subscription plans page after successful registration
+      router.push({
+        pathname: '/(auth)/plans',
+        params: { fromRegistration: 'true' }
+      });
     } catch (error) {
       Alert.alert('Error', 'An unexpected error occurred');
       console.error(error);
@@ -48,16 +46,15 @@ export default function LoginScreen() {
     }
   };
 
-  const navigateToSignUp = () => {
-    router.push('/(auth)/register');
->>>>>>> 93ccba0 (Initial commit)
+  const navigateToLogin = () => {
+    router.push('/(auth)/login');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.subtitle}>Sign up to get started</Text>
       </View>
 
       <View style={styles.form}>
@@ -70,10 +67,7 @@ export default function LoginScreen() {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
-<<<<<<< HEAD
-=======
             editable={!isLoading}
->>>>>>> 93ccba0 (Initial commit)
           />
         </View>
 
@@ -81,41 +75,44 @@ export default function LoginScreen() {
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter your password"
+            placeholder="Create a password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-<<<<<<< HEAD
+            editable={!isLoading}
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-=======
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Confirm Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm your password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
             editable={!isLoading}
           />
         </View>
 
         <TouchableOpacity 
           style={[styles.button, isLoading && styles.buttonDisabled]} 
-          onPress={handleLogin}
+          onPress={handleRegister}
           disabled={isLoading}
         >
           {isLoading ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Register</Text>
           )}
         </TouchableOpacity>
         
         <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>Don't have an account?</Text>
-          <TouchableOpacity onPress={navigateToSignUp}>
-            <Text style={styles.signUpLink}>Sign Up</Text>
+          <Text style={styles.footerText}>Already have an account?</Text>
+          <TouchableOpacity onPress={navigateToLogin}>
+            <Text style={styles.signInLink}>Sign In</Text>
           </TouchableOpacity>
         </View>
->>>>>>> 93ccba0 (Initial commit)
       </View>
     </View>
   );
@@ -167,19 +164,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-<<<<<<< HEAD
-=======
   buttonDisabled: {
     backgroundColor: '#80BDFF',
   },
->>>>>>> 93ccba0 (Initial commit)
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
-<<<<<<< HEAD
-=======
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -190,10 +182,9 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontSize: 14,
   },
-  signUpLink: {
+  signInLink: {
     color: '#007AFF',
     fontSize: 14,
     fontWeight: '600',
   },
->>>>>>> 93ccba0 (Initial commit)
 });
